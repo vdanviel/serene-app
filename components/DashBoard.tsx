@@ -14,7 +14,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     welcome: {
-        
+        fontWeight: 'bold',
+        fontSize: 30
     }
 });
 
@@ -34,12 +35,10 @@ export default function Dashboard() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.container}>
 
-                <Text>Hello {user.user.name}</Text>
+            <Text>Hello {user.user.name}</Text>
 
-                <UserInteractions />
-            </View>
+            <UserInteractions />
         </View>
     );
 

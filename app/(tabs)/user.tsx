@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { Text, View, Button, StyleSheet, ActivityIndicator } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from "../AuthContext";
 import Begin from "@/components/Begin";
 import Dashboard from "@/components/DashBoard";
+import { useColorScheme } from '@/components/useColorScheme';
+import Colors from '@/constants/Colors';
 import env from "../../env";
 
 export interface UserData {
@@ -84,6 +86,27 @@ export default function User() {
 
     }, [stateUser])
 
+    const colorScheme = useColorScheme()
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+    });
+
+    //para antes da solicitação, ele fica um loading.. (pois o estado inicial de statuser é null e stateVerify n foi analizado ainda..)
+    if (stateUser == null) {
+        
+        return(
+            <View style={styles.container}>
+                <ActivityIndicator color={colorScheme == 'dark' ? Colors.dark.tint : Colors.light.tint}/>
+            </View>
+        )
+
+    }
+
+    //se usuario não esta autenticado..
     if (stateVerify == false) {
 
         /*
@@ -104,6 +127,7 @@ export default function User() {
 
     }
 
+    //se usuario esta autenticado..
     if (stateVerify == true) {
         
         return (
