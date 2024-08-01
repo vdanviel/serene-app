@@ -34,7 +34,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="begin"
+        name="user"
         options={{
           headerTitle:"Start",
           tabBarShowLabel: false,

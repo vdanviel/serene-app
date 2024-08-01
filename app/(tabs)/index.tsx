@@ -6,8 +6,10 @@ import { Button } from "react-native";
 import Presentation from '@/components/Presentation';
 import { Text, View } from '@/components/Themed';
 
+import { ExternalLink } from '@/components/ExternalLink';
+
 import IconWrappper from "@/components/IconWrapper";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { FontAwesome6 } from "@expo/vector-icons";
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -25,7 +27,9 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
+
       <Presentation/>
+
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
 
       <Text style={styles.text}>Serene is a psycologist AI that guess if you have ansiety based on a quickmade form. It's develop with <Text style={styles.italic}>React Native</Text> / <Text style={styles.italic}>Symfony</Text> (as API) and <Text style={styles.italic}>Postgre</Text> as its Database.</Text>
@@ -45,16 +49,19 @@ export default function TabOneScreen() {
         />
       </View>
 
-      <View style={styles.advice}>
-        <IconWrappper IconComponent={MaterialCommunityIcons} name='doctor' color={Colors.default.background} size={30} />
-        <Text style={styles.text}>It's important to relember that AI is not recommended to replace a profissional psycologists.</Text>
-      </View>
-    
       <Button
         title="Get Started"
         onPress={goToBegin}
         color={colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint}
       />
+
+      <View style={styles.advice} >
+
+          <IconWrappper IconComponent={FontAwesome6} name='user-doctor' color={Colors.default.background} size={30} />
+          <ExternalLink href='https://www.nami.org/' style={styles.text}>It's important to relember that AI is not recommended to replace a profissional psycologists. Click to access NAMI (National Alliance on Mental Illness)</ExternalLink>
+
+      </View>
+
     </View>
   );
 }
@@ -68,7 +75,9 @@ const styles = StyleSheet.create({
   techs:{
     flexDirection: 'row',
     display: 'flex',
-    gap: 5
+    gap: 5,
+    marginBottom: 20,
+    marginTop: 10
   },
   text: {
     fontSize: 15,
@@ -92,9 +101,11 @@ const styles = StyleSheet.create({
     borderColor: Colors.default.background,
     borderRadius: 16,
     margin: 15,
+    marginTop:30,
     padding: 10,
     borderWidth: 1,
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center'
   }
 });
