@@ -3,6 +3,7 @@ import { Tabs } from 'expo-router';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import IconHeader from "@/components/IconHeader";
 
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -36,7 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="user"
         options={{
-          headerTitle:"Start",
+          header: () => <IconHeader/>,
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="brain" color={color} />,
         }}
