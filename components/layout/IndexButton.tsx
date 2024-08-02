@@ -12,7 +12,7 @@ interface IndexButtonProps {
     textColor?: ColorValue | undefined,
     width?: DimensionValue | undefined,
     margin?: DimensionValue | undefined,
-    onPress: () => void
+    onPress: ([type] : any) => void
 }
 
 export default function IndexButton({children = null ,title, buttonStyle = {}, margin=18, bg = undefined, textColor = undefined, width = 'auto', onPress}: IndexButtonProps) {

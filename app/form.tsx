@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from 'expo-router';
-import { Modal, Text, TextInput, Pressable, View, StyleSheet, Button, ScrollView, SafeAreaView, Alert, BackHandler } from 'react-native';
-import { FontAwesome5 } from "@expo/vector-icons";
+import { Modal, Text, TextInput, View, StyleSheet, ScrollView, BackHandler } from 'react-native';
+import { FontAwesome5, FontAwesome } from "@expo/vector-icons";
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import IconWrapper from "@/components/IconWrapper";
@@ -10,14 +10,15 @@ import ConfirmExitModal from "@/components/ConfirmExitModal";
 
 interface CardInterface {
     question: string,
+    index: number,
     onAnswer: ([type] : string) => void
 }
 
-const Card = ({ question, onAnswer }: CardInterface) => {
+const Card = ({ question, index, onAnswer }: CardInterface) => {
 
     const [modalVisible, setModalVisible] = useState(false);
-    const [answer, setAnswer] = useState('');
-    const textAreaRef = useRef()
+    const [answer, setAnswer] = useState<string | null>(null);
+    const textAreaRef = useRef<TextInput>(null)
 
     const router = useRouter();
     const colorScheme = useColorScheme();
@@ -31,67 +32,53 @@ const Card = ({ question, onAnswer }: CardInterface) => {
             elevation: 2,
         },
         question: {
-            fontSize: 16,
-            marginBottom: 10,
-        },
-        button: {
-            backgroundColor: Colors.default.background,
-            padding: 10,
-            borderRadius: 5,
-            flexDirection: 'row',
-            alignItems: 'center',
-        },
-        buttonText: {
-            color: colorScheme == "dark" ? "#ffffff" : "#000",
-            fontSize: 16,
-            fontWeight: 'bold',
-            marginRight: 10
+            fontSize: 14,
+            fontWeight: '400',
+            textAlign: 'left',
+            padding:12,
+            paddingTop:0,
+            color: "d0d0d0",
+            height: 'auto'
         },
         modalContainer: {
             flex: 1,
             zIndex: 10,
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+
         },
         modalContent: {
-            zIndex: 30,
-            width: '80%',
-            height: '65%',
-            display: 'flex',
-            justifyContent: 'center',
+            width:'100%',
+            height:'100%',
             backgroundColor: '#fff',
             padding: 20,
             margin: 25,
             borderRadius: 10,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 5,
-            elevation: 10
+            display: 'flex',
+            justifyContent: 'center'
           },
         textArea: {
             height: '80%',
-            marginBottom: 20,
-            padding: 1
-        },
-        saveButton: {
-            backgroundColor: colorScheme == "dark" ? Colors.dark.tint : Colors.light.tint,
-            padding: 10,
-            borderRadius: 5,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        saveButtonText: {
-            color: '#fff',
-            fontWeight: 'bold',
-            fontSize: 16,
-            marginRight: 10,
-        },
+            marginBottom: 20
+        }
     });
-  
+    
+    useEffect(() => {
+
+        if (textAreaRef.current) {
+            
+            textAreaRef.current.focus();
+            
+        }
+
+    }, [modalVisible]);
+
     //abre modal
-    const handleModalOpen = () => setModalVisible(true);
+    const handleModalOpen = () => {
+
+        setModalVisible(true);
+
+    }
 
     //fecha modal
     const handleModalClose = () => setModalVisible(false);
@@ -109,21 +96,27 @@ const Card = ({ question, onAnswer }: CardInterface) => {
 
             <Text style={cardStyles.question}>{question}</Text>
 
-            <Pressable
-                style={cardStyles.button}
+            <IndexButton
+                title={answer ? 'Done' : 'Provide a answer'}
+                margin={0}
+                bg={answer ? Colors.default.tint : 'transparent'}
+                textColor={answer ? 'white' : Colors.default.tint}
+                buttonStyle={answer ? {} :{borderColor:Colors.default.tint, borderWidth: 2}}
                 onPress={handleModalOpen}
             >
 
-                <Text style={cardStyles.buttonText}>
-                    {answer ? 'Done' : 'Write Answer'}
-                </Text>
+                {
+                    answer !== null 
+                    ?
+                    <IconWrapper name="check" IconComponent={FontAwesome5} color="white" size={20} /> 
+                    : 
+                    null
+                }
 
-                {answer && <IconWrapper name="check" IconComponent={FontAwesome5} color="black" size={20} />}
-
-            </Pressable>
+            </IndexButton>
 
             <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={handleModalClose}
@@ -138,24 +131,20 @@ const Card = ({ question, onAnswer }: CardInterface) => {
                             autoFocus={true}
                             focusable={true}
                             multiline
+                            ref={textAreaRef}
                             cursorColor={colorScheme == "dark" ? Colors.dark.tint : Colors.light.tint}
-                            verticalAlign="top"
-                            textAlign="left"
                             placeholder="Type your answer here..."
-                            value={answer}
+                            value={answer == null ? '' : answer}
                             onChangeText={text => handleChangeText(text)}
+                            textAlignVertical="top"
+                            selectionColor={colorScheme == "dark" ? Colors.dark.tint : Colors.light.tint}
                         />
 
-                        <Pressable
-                            style={cardStyles.saveButton}
+                        <IndexButton
+                            title={'Save'}
+                            margin={0}
                             onPress={handleModalClose}
-                        >
-
-                            <Text style={cardStyles.saveButtonText}>
-                                Save
-                            </Text>
-
-                        </Pressable>
+                        />
 
                     </View>
 
@@ -174,7 +163,7 @@ const dialog: { question: string, answer: string | null }[] = [
         answer: null 
     },
     {
-        question: "Do you have difficulty controlling your worries or feel overwhelmed by them?",
+        question: "Do you have difficulty controlling your worries or feel overwhelmed by them, how do you feel about them?",
         answer: null 
     },
     {
@@ -249,13 +238,14 @@ const Form = () => {
             <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
 
             {dialog.map((item, index) => (
-                <Card key={index} question={item.question} onAnswer={createAnswerHandler(index)} />
+                <Card key={index} question={item.question} index={index} onAnswer={createAnswerHandler(index)} />
             ))}
+        
+            <IndexButton buttonStyle={{marginBottom:40, margin:0}} title="Generete your diagnostic" onPress={() => {}}>
 
-            <IndexButton buttonStyle={{marginBottom:40}} title="Generete your diagnostic" onPress={() => {}}>
+                <IconWrapper name="stethoscope" IconComponent={FontAwesome} color="white" size={25} /> 
+
             </IndexButton>
-
-
 
         </ScrollView>
     );

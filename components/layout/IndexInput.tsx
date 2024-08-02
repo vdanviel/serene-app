@@ -34,6 +34,7 @@ const IndexInput: React.FC<IndexInputProps> = ({ placeholder, input_value, onTex
             value={input_value}
             placeholder={placeholder}
             keyboardType="default"
+            cursorColor={colorScheme == "dark" ? Colors.dark.tint : Colors.light.tint}
             selectionColor={colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint}
         />
     );

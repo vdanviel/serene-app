@@ -64,7 +64,7 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
 
-      <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>{/**/}
+      <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>{/*modal de confirmação de saida do formulário de perguntas, quando aperta no butão back do header*/}
 
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
