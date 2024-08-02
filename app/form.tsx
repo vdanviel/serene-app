@@ -7,6 +7,9 @@ import { useColorScheme } from '@/components/useColorScheme';
 import IconWrapper from "@/components/IconWrapper";
 import IndexButton from "@/components/layout/IndexButton";
 import ConfirmExitModal from "@/components/ConfirmExitModal";
+import { errorMesage } from "./alertMessages";
+import { useUserContext } from "./AuthContext";
+import env from "../env";
 
 interface CardInterface {
     question: string,
@@ -41,35 +44,35 @@ const Card = ({ question, index, onAnswer }: CardInterface) => {
             height: 'auto'
         },
         modalContainer: {
-            flex: 1,
+            //flex: 1,
             zIndex: 10,
             justifyContent: 'center',
             alignItems: 'center',
-
-        },
-        modalContent: {
-            width:'100%',
-            height:'100%',
+            
             backgroundColor: '#fff',
             padding: 20,
             margin: 25,
             borderRadius: 10,
-            display: 'flex',
-            justifyContent: 'center'
-          },
+
+        },
         textArea: {
             height: '80%',
+            width:'90%',
             marginBottom: 20
         }
     });
     
     useEffect(() => {
 
-        if (textAreaRef.current) {
-            
-            textAreaRef.current.focus();
-            
-        }
+        setTimeout(() => {
+
+            if (textAreaRef.current) {
+
+                textAreaRef.current.focus();
+
+            }
+
+        }, 500);
 
     }, [modalVisible]);
 
@@ -117,19 +120,14 @@ const Card = ({ question, index, onAnswer }: CardInterface) => {
 
             <Modal
                 animationType="fade"
-                transparent={true}
                 visible={modalVisible}
                 onRequestClose={handleModalClose}
             >
 
-                <View onTouchStart={handleModalClose} style={cardStyles.modalContainer}>
-
-                    <View onTouchStart={(e) => e.stopPropagation()} style={cardStyles.modalContent}>
+                    <View style={cardStyles.modalContainer}>
 
                         <TextInput
-                            style={cardStyles.textArea}                        
-                            autoFocus={true}
-                            focusable={true}
+                            style={cardStyles.textArea}
                             multiline
                             ref={textAreaRef}
                             cursorColor={colorScheme == "dark" ? Colors.dark.tint : Colors.light.tint}
@@ -144,11 +142,13 @@ const Card = ({ question, index, onAnswer }: CardInterface) => {
                             title={'Save'}
                             margin={0}
                             onPress={handleModalClose}
+                            buttonStyle={{
+                                zIndex:50,
+                                width:'100%'
+                            }}
                         />
 
                     </View>
-
-                </View>
 
             </Modal>
             
@@ -184,6 +184,7 @@ const Form = () => {
 
     const colorScheme = useColorScheme();
     const router = useRouter();
+    
 
     const [stateAnswers, setAnswers] = useState(dialog);
     const [modalVisible, setModalVisible] = useState(false);
@@ -232,8 +233,50 @@ const Form = () => {
           }
     })
 
+    const registerDiagnostic = async () => {
+        const user = useUserContext();
+    
+        try {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+    
+            const payload = {
+                dialog: dialog.map(d => ({
+                    question: d.question,
+                    answer: d.answer,
+                })),
+                token: user.user.token,
+            };
+    
+            const requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: JSON.stringify(payload),
+            };
+    
+            const response = await fetch(env.pass_key, requestOptions);
+            const result = await response.json();
+    
+            if (response.ok) {
+                console.log(result);
+                router.push({
+                    pathname: '/diagnostic',
+                    params: {
+                        markdownString: result.diagnostic,
+                    },
+                });
+            } else {
+                throw new Error(result.message || 'Failed to register diagnostic');
+            }
+    
+        } catch (error) {
+            errorMesage(error);
+            console.error(error);
+        }
+    };
+
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView keyboardShouldPersistTaps="always" style={styles.container}>{/*keyboardShouldPersistTaps - garante que seja possivel apertar em elementos touchable quando o teclado estiver aberto. usamos isso para o IndexButton dentro do Modal de Card funcionar...*/}
 
             <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
 
@@ -241,9 +284,9 @@ const Form = () => {
                 <Card key={index} question={item.question} index={index} onAnswer={createAnswerHandler(index)} />
             ))}
         
-            <IndexButton buttonStyle={{marginBottom:40, margin:0}} title="Generete your diagnostic" onPress={() => {}}>
+            <IndexButton activate={false} buttonStyle={{marginBottom:40, margin:0}} title="Generete your diagnostic" onPress={registerDiagnostic}>
 
-                <IconWrapper name="stethoscope" IconComponent={FontAwesome} color="white" size={25} /> 
+                <IconWrapper name="stethoscope" IconComponent={FontAwesome5} color="white" size={25} /> 
 
             </IndexButton>
 

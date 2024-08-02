@@ -86,7 +86,7 @@ export default function User() {
     if (stateVerify === null) {
         return(
             <View style={styles.container}>
-                <ActivityIndicator color={colorScheme == 'dark' ? Colors.dark.tint : Colors.light.tint}/>
+                <ActivityIndicator size={50} color={colorScheme == 'dark' ? Colors.dark.tint : Colors.light.tint}/>
             </View>
         )
     }

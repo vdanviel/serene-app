@@ -59,8 +59,6 @@ function RootLayoutNav() {
 
   }
 
-
-
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
 
@@ -68,7 +66,8 @@ function RootLayoutNav() {
 
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name='form'  options={{ headerBackVisible: false, headerLeft: () => <BackButton onBack={confirmationExitForm}/>, headerTitle:"New Interaction", animation: 'flip' }} />
+        <Stack.Screen name="diagnostic" options={{ headerShown: true, headerTitle:"Your diagnostic", animation: 'flip' }} />
+        <Stack.Screen name='form' options={{ headerShown:true, headerBackVisible: false, headerLeft: () => <BackButton onBack={confirmationExitForm}/>, headerTitle:"New Interaction", animation: 'flip' }} />
       </Stack>
     </ThemeProvider>
   );

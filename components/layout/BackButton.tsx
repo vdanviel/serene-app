@@ -20,15 +20,16 @@ const BackButton = ({ onBack = () => useRouter().back() }: BackButtonInterface) 
             ]}
             android_ripple={{ color: '#ddd', borderless: true }}
         >
-            <IconWrapper IconComponent={Ionicons} name="arrow-back" color="#1c1c1c" size={28} />
+            <Ionicons name="arrow-back" size={24} color="black" />
         </Pressable>
     );
 };
 
 const styles = StyleSheet.create({
     button: {
-        padding: 12,
-        borderRadius: 30, // Torna o botão redondo
+        marginRight: 10,
+        //marginLeft: 10
+
     } as ViewStyle,
 });
 
