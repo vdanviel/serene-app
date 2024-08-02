@@ -75,7 +75,7 @@ export default function UserInteractions() {
         return (
             <View style={interactStyle.advice}>
                 <IconWrappper IconComponent={FontAwesome6} name='circle-minus' color={Colors.default.background} size={20} />
-                <Text>You have no interactions yet! Try one on the answer section.</Text>
+                <Text style={{textAlign:"center"}} >You have no interactions yet! Create one top button.</Text>
             </View>
         )
     }

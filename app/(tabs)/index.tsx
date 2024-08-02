@@ -1,7 +1,7 @@
 import { StyleSheet, Image } from 'react-native';
 
 import { useRouter } from 'expo-router';
-import { Button } from "react-native";
+import IndexButton from "@/components/layout/IndexButton";
 
 import Presentation from '@/components/Presentation';
 import { Text, View } from '@/components/Themed';
@@ -19,9 +19,9 @@ export default function TabOneScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
 
-  const goToBegin = () => {
+  const goTouser = () => {
 
-    return router.navigate("/begin");
+    return router.navigate("/user");
 
   }
 
@@ -49,11 +49,9 @@ export default function TabOneScreen() {
         />
       </View>
 
-      <Button
-        title="Get Started"
-        onPress={goToBegin}
-        color={colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint}
-      />
+      <IndexButton title='Get Started' onPress={goTouser}>
+
+      </IndexButton>
 
       <View style={styles.advice} >
 

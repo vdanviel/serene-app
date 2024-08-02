@@ -3,10 +3,11 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
-
+import BackButton from "@/components/layout/BackButton";
 import { useColorScheme } from '@/components/useColorScheme';
+import ConfirmExitModal from "@/components/ConfirmExitModal";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,12 +51,24 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  const confirmationExitForm = () => {
+
+    setModalVisible(true);
+
+  }
+
+
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+
+      <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>{/**/}
+
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name='form' options={{ headerTitle:"Your Form", headerShown: true, animation: 'flip' }} />
+        <Stack.Screen name='form'  options={{ headerBackVisible: false, headerLeft: () => <BackButton onBack={confirmationExitForm}/>, headerTitle:"New Interaction", animation: 'flip' }} />
       </Stack>
     </ThemeProvider>
   );

@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from 'expo-router';
-import { Modal, Text, TextInput, Pressable, View, StyleSheet, Button, ScrollView, SafeAreaView  } from 'react-native';
-
-import IconWrapper from "@/components/IconWrapper";
-
+import { Modal, Text, TextInput, Pressable, View, StyleSheet, Button, ScrollView, SafeAreaView, Alert, BackHandler } from 'react-native';
+import { FontAwesome5 } from "@expo/vector-icons";
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import IconWrapper from "@/components/IconWrapper";
+import IndexButton from "@/components/layout/IndexButton";
+import ConfirmExitModal from "@/components/ConfirmExitModal";
 
-import { MaterialIcons } from '@expo/vector-icons';
+interface CardInterface {
+    question: string,
+    onAnswer: ([type] : string) => void
+}
 
-const Card = ({ question, onAnswer }) => {
+const Card = ({ question, onAnswer }: CardInterface) => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [answer, setAnswer] = useState('');
@@ -114,7 +118,7 @@ const Card = ({ question, onAnswer }) => {
                     {answer ? 'Done' : 'Write Answer'}
                 </Text>
 
-                {answer && <IconWrapper name="check" IconComponent={MaterialIcons} color="black" size={20} />}
+                {answer && <IconWrapper name="check" IconComponent={FontAwesome5} color="black" size={20} />}
 
             </Pressable>
 
@@ -165,26 +169,41 @@ const Card = ({ question, onAnswer }) => {
 
 
 const dialog: { question: string, answer: string | null }[] = [
-    { question: "In the past six months, have you often felt worried or anxious about various issues and everyday situations?", answer: null },
-    { question: "Do you have difficulty controlling your worries or feel overwhelmed by them?", answer: null },
-    { question: "Have you experienced physical symptoms of anxiety, such as palpitations, trembling, excessive sweating, dizziness, or shortness of breath, even without an apparent reason?", answer: null },
-    { question: "Do you avoid situations or activities that you fear might trigger anxiety or panic?", answer: null },
-    { question: "Does your anxiety interfere with your ability to work, study, or perform daily tasks?", answer: null }
+    {
+        question: "In the past six months, have you often felt worried or anxious about various issues and everyday situations?",
+        answer: null 
+    },
+    {
+        question: "Do you have difficulty controlling your worries or feel overwhelmed by them?",
+        answer: null 
+    },
+    {
+        question: "Have you experienced physical symptoms of anxiety, such as palpitations, trembling, excessive sweating, dizziness, or shortness of breath, even without an apparent reason?",
+        answer: null 
+    },
+    {
+        question: "Do you avoid situations or activities that you fear might trigger anxiety or panic?",
+        answer: null 
+    },
+    {
+        question: "Does your anxiety interfere with your ability to work, study, or perform daily tasks?",
+        answer: null 
+    }
 ];
-
 
 const Form = () => {
 
     const colorScheme = useColorScheme();
     const router = useRouter();
 
-    const [stateAnswers, setAnswers] = useState(dialog)
+    const [stateAnswers, setAnswers] = useState(dialog);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const storeAnswers = (index : number, text : string) => {
-        
+
         //salva a resposta da pergunta atual...
         stateAnswers[index].answer = text;
-        setAnswers(stateAnswers);       
+        setAnswers(stateAnswers);
 
     };
 
@@ -198,33 +217,48 @@ const Form = () => {
 
     };
 
+    useEffect(() => {
+
+        const backAction = () => {
+
+            setModalVisible(true);
+
+            return true;
+        };
+    
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction,
+        );
+    
+        return () => backHandler.remove();
+
+    }, []);
+
+    const styles = StyleSheet.create({
+          container: {
+            flex: 1,
+            padding: 20,
+            margin: 20
+          }
+    })
+
     return (
-        <SafeAreaView style={styles.container}>
+        <ScrollView style={styles.container}>
 
-            <ScrollView>
+            <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
 
-                {dialog.map((item, index) => (
-                    <Card key={index} question={item.question} onAnswer={createAnswerHandler(index)} />
-                ))}
+            {dialog.map((item, index) => (
+                <Card key={index} question={item.question} onAnswer={createAnswerHandler(index)} />
+            ))}
 
-                <Button
-                    title="Generete Diagnostic"
-                    onPress={() => router.navigate('/form')}
-                    color={colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint}
-                />
+            <IndexButton buttonStyle={{marginBottom:40}} title="Generete your diagnostic" onPress={() => {}}>
+            </IndexButton>
 
-            </ScrollView>
 
-        </SafeAreaView>
+
+        </ScrollView>
     );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    margin: 20
-  }
-});
 
 export default Form;

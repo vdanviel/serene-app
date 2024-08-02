@@ -1,13 +1,13 @@
-import { useContext } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, Button, StyleSheet, Alert } from "react-native";
 
 import { useRouter } from 'expo-router';
 import UserInteractions from "@/components/UserInteractions";
 import { useColorScheme } from '@/components/useColorScheme';
-
+import IconWrapper from "@/components/IconWrapper";
 import { useUserContext } from "../app/AuthContext";
-
+import IndexButton from "@/components/layout/IndexButton";
 import Colors from "@/constants/Colors";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 export default function Dashboard() {
 
@@ -19,6 +19,7 @@ export default function Dashboard() {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
+            backgroundColor: colorScheme == 'dark' ? Colors.dark.background : Colors.light.background
         },
         welcome: {
             fontWeight: 'bold',
@@ -47,9 +48,11 @@ export default function Dashboard() {
     return (
         <View style={styles.container}>
 
-
-            
             <Text style={styles.welcome}>Hello {user.user.name}!</Text>
+
+            <IndexButton title="Create a new interaction" onPress={() => router.push('/form')}>
+                <IconWrapper IconComponent={FontAwesome6} name="heart-circle-plus" color="white" />
+            </IndexButton>
 
             <UserInteractions />
         </View>
