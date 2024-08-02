@@ -1,4 +1,4 @@
-import { PressableProps, DimensionValue, ColorValue, StyleSheet, Pressable, StyleProp, ViewStyle } from "react-native";
+import { DimensionValue, ColorValue, StyleSheet, Pressable, StyleProp, ViewStyle, View, FlexAlignType  } from "react-native";
 import React from "react";
 import { Text } from '@/components/Themed';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -13,12 +13,42 @@ interface IndexButtonProps<T> {
     textColor?: ColorValue | undefined,
     width?: DimensionValue | undefined,
     margin?: DimensionValue | undefined,
+    align?: FlexAlignType,
     onPress: () => T | Promise<T>
 }
 
-export default function IndexButton({children = null , activate = true, title, buttonStyle = {}, margin=18, bg = undefined, textColor = undefined, width = 'auto', onPress}: IndexButtonProps<void>) {
+export default function IndexButton({children = null, align='flex-start', activate = true, title, buttonStyle = {}, margin=18, bg = undefined, textColor = undefined, width = 'auto', onPress}: IndexButtonProps<void>) {
 
     const colorScheme = useColorScheme();
+
+    function identity(arg: any): any {
+        return arg;
+    }
+
+    //let alignOriented :  Pick<IndexButtonProps<void>, "align"> = {align: null};//Pick - https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys
+    let output = identity(null);
+
+    switch (align) {
+        case 'flex-start':
+            output = 'flex-start'
+            break;
+        case 'center':
+            output = 'center'
+            break;
+        case 'flex-end':
+            output = 'fle-end'
+            break;
+        case 'baseline':
+            output = 'baseline'
+            break;
+        case 'stretch':
+            output = 'stretch'
+            break;
+    
+        default:
+            output = 'flex-start'
+            break;
+    }
 
     const styles = StyleSheet.create({
         patternPresssable: {
@@ -27,9 +57,6 @@ export default function IndexButton({children = null , activate = true, title, b
             padding: 12,
             borderRadius: 16,
             margin: margin,
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
             gap: 5
         },
         patternText: {
@@ -45,10 +72,13 @@ export default function IndexButton({children = null , activate = true, title, b
             style={[styles.patternPresssable, buttonStyle]}
             onPress={onPress}
             disabled={!activate}
-            
+
         >
-            {children}
-            <Text style={styles.patternText}>{title}</Text>
+            <View style={{display: 'flex',flexDirection: 'row',alignItems: 'center', justifyContent: output, gap:5}}>
+                {children}
+                <Text style={styles.patternText}>{title}</Text>
+            </View>
+            
         </Pressable>
     )
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from 'expo-router';
-import { Modal, Text, TextInput, View, StyleSheet, ScrollView, BackHandler } from 'react-native';
+import { Modal, Text, TextInput, View, StyleSheet, ScrollView, BackHandler, ActivityIndicator } from 'react-native';
 import { FontAwesome5, FontAwesome } from "@expo/vector-icons";
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -17,7 +17,7 @@ interface CardInterface {
     onAnswer: ([type] : string) => void
 }
 
-const Card = ({ question, index, onAnswer }: CardInterface) => {
+const Card = ({ question, onAnswer }: CardInterface) => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [answer, setAnswer] = useState<string | null>(null);
@@ -187,21 +187,32 @@ const Form = () => {
     
 
     const [stateAnswers, setAnswers] = useState(dialog);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [stateisLoading, setIsLoading] = useState<boolean>(false);
+    const [stateIsReleased, setIsReleased] = useState<boolean>(false);
 
-    const storeAnswers = (index : number, text : string) => {
-
-        //salva a resposta da pergunta atual...
-        stateAnswers[index].answer = text;
-        setAnswers(stateAnswers);
-
-    };
 
     const createAnswerHandler = (index : number) => {//index - o numero q index (para saber o numero da pergunta..)
 
         return (text : string) => {//text - o texto (valor) da pergunta..
 
-            storeAnswers(index, text);//ele manda para uma função que armanena esses dados de maneira reativa..
+            //salva a resposta da pergunta atual...
+            stateAnswers[index].answer = text;
+            setAnswers(stateAnswers);
+            
+            console.log(stateAnswers);
+            
+            //verificar se todas as perguntas estão respondidas, se sim liberar o botão de gerar diagnostico..
+            const incompleted = stateAnswers.find(interaction => interaction.answer === null || interaction.answer === "");
+
+            console.log(incompleted);
+            
+
+            if (incompleted === undefined) {
+                setIsReleased(true);    
+            }else{
+                setIsReleased(false);
+            }
 
         };
 
@@ -235,7 +246,9 @@ const Form = () => {
 
     const registerDiagnostic = async () => {
         const user = useUserContext();
-    
+        
+        setIsLoading(true);
+
         try {
             const myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
@@ -258,13 +271,14 @@ const Form = () => {
             const result = await response.json();
     
             if (response.ok) {
-                console.log(result);
+                
                 router.push({
                     pathname: '/diagnostic',
                     params: {
                         markdownString: result.diagnostic,
                     },
                 });
+
             } else {
                 throw new Error(result.message || 'Failed to register diagnostic');
             }
@@ -273,10 +287,13 @@ const Form = () => {
             errorMesage(error);
             console.error(error);
         }
+
+        setIsLoading(false);
+
     };
 
     return (
-        <ScrollView keyboardShouldPersistTaps="always" style={styles.container}>{/*keyboardShouldPersistTaps - garante que seja possivel apertar em elementos touchable quando o teclado estiver aberto. usamos isso para o IndexButton dentro do Modal de Card funcionar...*/}
+        <ScrollView keyboardShouldPersistTaps="always" style={styles.container}>{/*keyboardShouldPersistTaps - https://reactnative.dev/docs/scrollview#keyboardshouldpersisttaps* (usado para quando o usuario clicar em "Save do Card>Modal>IndexButton ele funcionar pois teclado não abaixa")*/}
 
             <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
 
@@ -284,9 +301,17 @@ const Form = () => {
                 <Card key={index} question={item.question} index={index} onAnswer={createAnswerHandler(index)} />
             ))}
         
-            <IndexButton activate={false} buttonStyle={{marginBottom:40, margin:0}} title="Generete your diagnostic" onPress={registerDiagnostic}>
+            <IndexButton align="center" activate={stateIsReleased} buttonStyle={{marginBottom:40, margin:0}} title={stateisLoading ? "" : "Generete your diagnostic"} onPress={registerDiagnostic}>
 
-                <IconWrapper name="stethoscope" IconComponent={FontAwesome5} color="white" size={25} /> 
+                
+                {
+                    stateisLoading 
+                    ?
+                    <ActivityIndicator size={25} color={'white'}/>
+                    :
+                    <IconWrapper name="stethoscope" IconComponent={FontAwesome5} color="white" size={25} />
+                }
+                
 
             </IndexButton>
 
