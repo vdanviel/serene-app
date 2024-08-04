@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Text, View, Button, StyleSheet, ActivityIndicator } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { UserData } from "../app/(tabs)/user";
+import { UserData } from "../app/reusable";
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import IndexInput from "@/components/layout/IndexInput";
@@ -38,6 +38,8 @@ export default function Begin({onRegister} : BeginProps) {
             marginBottom: 15
         },
     });
+
+    
 
     const registerAccount = async (): Promise<void> => {
 

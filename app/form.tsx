@@ -10,9 +10,10 @@ import ConfirmExitModal from "@/components/ConfirmExitModal";
 import { errorMesage } from "./alertMessages";
 import { useUserContext } from "./AuthContext";
 import env from "../env";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CardInterface {
-    question: string,
+    question: string | null,
     index: number,
     onAnswer: ([type] : string) => void
 }
@@ -136,6 +137,7 @@ const Card = ({ question, onAnswer }: CardInterface) => {
                             onChangeText={text => handleChangeText(text)}
                             textAlignVertical="top"
                             selectionColor={colorScheme == "dark" ? Colors.dark.tint : Colors.light.tint}
+                            maxLength={35}
                         />
 
                         <IndexButton
@@ -156,58 +158,54 @@ const Card = ({ question, onAnswer }: CardInterface) => {
     );
 };
 
-
-const dialog: { question: string, answer: string | null }[] = [
-    {
-        question: "In the past six months, have you often felt worried or anxious about various issues and everyday situations?",
-        answer: null 
-    },
-    {
-        question: "Do you have difficulty controlling your worries or feel overwhelmed by them, how do you feel about them?",
-        answer: null 
-    },
-    {
-        question: "Have you experienced physical symptoms of anxiety, such as palpitations, trembling, excessive sweating, dizziness, or shortness of breath, even without an apparent reason?",
-        answer: null 
-    },
-    {
-        question: "Do you avoid situations or activities that you fear might trigger anxiety or panic?",
-        answer: null 
-    },
-    {
-        question: "Does your anxiety interfere with your ability to work, study, or perform daily tasks?",
-        answer: null 
-    }
-];
-
 const Form = () => {
 
     const colorScheme = useColorScheme();
     const router = useRouter();
     
+    const dialog: { question: string | null, answer: string | null }[] = [
+        {
+            question: null,
+            answer: null 
+        },
+        {
+            question: null,
+            answer: null 
+        },
+        {
+            question: null,
+            answer: null 
+        },
+        {
+            question: null,
+            answer: null 
+        },
+        {
+            question: null,
+            answer: null 
+        }
+    ];
 
-    const [stateAnswers, setAnswers] = useState(dialog);
+    const [stateDialog, setDialog] = useState(dialog);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
-    const [stateisLoading, setIsLoading] = useState<boolean>(false);
+    const [stateRegisterDiagIsLoading, setRegisterDiagIsLoading] = useState<boolean>(false);
+    const [stateGenerateQuestionsIsLoading, setGenerateQuestionsIsLoading] = useState<boolean>(true);
     const [stateIsReleased, setIsReleased] = useState<boolean>(false);
 
+    const client = useUserContext();
+    
 
     const createAnswerHandler = (index : number) => {//index - o numero q index (para saber o numero da pergunta..)
 
         return (text : string) => {//text - o texto (valor) da pergunta..
 
             //salva a resposta da pergunta atual...
-            stateAnswers[index].answer = text;
-            setAnswers(stateAnswers);
-            
-            console.log(stateAnswers);
+            stateDialog[index].answer = text;
+            setDialog(stateDialog);
             
             //verificar se todas as perguntas estão respondidas, se sim liberar o botão de gerar diagnostico..
-            const incompleted = stateAnswers.find(interaction => interaction.answer === null || interaction.answer === "");
-
-            console.log(incompleted);
+            const incompleted = stateDialog.find(interaction => interaction.answer === null || interaction.answer === "");
             
-
             if (incompleted === undefined) {
                 setIsReleased(true);    
             }else{
@@ -220,6 +218,34 @@ const Form = () => {
 
     useEffect(() => {
 
+        //GERAR AS PERGUNTAS ALEATÓRIAS..
+        const fetchRandomQuestions = async () => {
+
+            const response = await fetch(env.url_fetch + "/serene/questions?len=" + dialog.length, {
+                method: "GET",
+                headers : {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                }
+            });
+    
+            const data = await response.json();
+
+            data.forEach((apiQuestion : string, index : number) => {
+
+                stateDialog[index].question = apiQuestion;
+
+            });            
+
+            setDialog(stateDialog);
+
+            setGenerateQuestionsIsLoading(false);
+
+        }
+
+        fetchRandomQuestions();
+
+        //MODAL QUANDO USUARIO TENTA SAIR DO FORMULÁRIO
         const backAction = () => {
 
             setModalVisible(true);
@@ -227,12 +253,10 @@ const Form = () => {
             return true;
         };
     
-        const backHandler = BackHandler.addEventListener(
+        BackHandler.addEventListener(
             'hardwareBackPress',
             backAction,
         );
-    
-        return () => backHandler.remove();
 
     }, []);
 
@@ -240,83 +264,103 @@ const Form = () => {
           container: {
             flex: 1,
             padding: 20,
-            margin: 20
+            margin: 20,
           }
     })
 
-    const registerDiagnostic = async () => {
-        const user = useUserContext();
+    if (stateGenerateQuestionsIsLoading) {
         
-        setIsLoading(true);
+        return(
+            <View style={styles.container}>
+                <ActivityIndicator size={50} color={colorScheme == 'dark' ? Colors.dark.tint : Colors.light.tint}/>
+            </View>
+        )
 
-        try {
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
+    }else{
+
+        const registerDiagnostic = async () => {
+            
+            setRegisterDiagIsLoading(true);
     
-            const payload = {
-                dialog: dialog.map(d => ({
-                    question: d.question,
-                    answer: d.answer,
-                })),
-                token: user.user.token,
-            };
-    
-            const requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: JSON.stringify(payload),
-            };
-    
-            const response = await fetch(env.pass_key, requestOptions);
-            const result = await response.json();
-    
-            if (response.ok) {
+            try {
+
+                const myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
                 
-                router.push({
-                    pathname: '/diagnostic',
-                    params: {
-                        markdownString: result.diagnostic,
-                    },
-                });
+                const token = await AsyncStorage.getItem(env.pass_key);
 
-            } else {
-                throw new Error(result.message || 'Failed to register diagnostic');
+                const payload = {
+                    dialog: stateDialog.map(d => ({
+                        question: d.question,
+                        answer: d.answer,
+                    })),
+                    token: token
+                };
+        
+                const requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: JSON.stringify(payload),
+                };
+        
+                const response = await fetch(env.url_fetch + "/serene/result", requestOptions);
+                const data = await response.json();
+
+                console.log(data);
+                
+
+                // if (response.ok) {
+                    
+                //     router.push({
+                //         pathname: '/diagnostic',
+                //         params: {
+                //             markdownString: String(data.description),
+                //             result: (data.result)
+                //         },
+                //     });
+    
+                // } else {
+                //     throw new Error(data.message || 'Failed to register diagnostic');
+                // }
+        
+            } catch (error) {
+                errorMesage(error, () => {});
+                console.error(error);
             }
     
-        } catch (error) {
-            errorMesage(error);
-            console.error(error);
-        }
+            setRegisterDiagIsLoading(false);
+    
+        };
 
-        setIsLoading(false);
+        return (
+            <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={styles.container}>{/*keyboardShouldPersistTaps - https://reactnative.dev/docs/scrollview#keyboardshouldpersisttaps* (usado para quando o usuario clicar em "Save do Card>Modal>IndexButton ele funcionar pois teclado não abaixa")*/}
 
-    };
+                <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
 
-    return (
-        <ScrollView keyboardShouldPersistTaps="always" style={styles.container}>{/*keyboardShouldPersistTaps - https://reactnative.dev/docs/scrollview#keyboardshouldpersisttaps* (usado para quando o usuario clicar em "Save do Card>Modal>IndexButton ele funcionar pois teclado não abaixa")*/}
-
-            <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
-
-            {dialog.map((item, index) => (
-                <Card key={index} question={item.question} index={index} onAnswer={createAnswerHandler(index)} />
-            ))}
-        
-            <IndexButton align="center" activate={stateIsReleased} buttonStyle={{marginBottom:40, margin:0}} title={stateisLoading ? "" : "Generete your diagnostic"} onPress={registerDiagnostic}>
-
-                
                 {
-                    stateisLoading 
-                    ?
-                    <ActivityIndicator size={25} color={'white'}/>
-                    :
-                    <IconWrapper name="stethoscope" IconComponent={FontAwesome5} color="white" size={25} />
+                    stateDialog.map((item, index) => (
+                        <Card key={index} question={item.question} index={index} onAnswer={createAnswerHandler(index)} />
+                    ))
                 }
-                
 
-            </IndexButton>
+                <IndexButton align="center" activate={stateIsReleased} buttonStyle={{marginBottom:40, margin:0}} title={stateRegisterDiagIsLoading ? "" : "Generete your diagnostic"} onPress={registerDiagnostic}>
 
-        </ScrollView>
-    );
+                    
+                    {
+                        stateRegisterDiagIsLoading 
+                        ?
+                        <ActivityIndicator size={25} color={'white'}/>
+                        :
+                        <IconWrapper name="stethoscope" IconComponent={FontAwesome5} color="white" size={25} />
+                    }
+                    
+
+                </IndexButton>
+
+            </ScrollView>
+        );
+
+    }
 };
 
 export default Form;

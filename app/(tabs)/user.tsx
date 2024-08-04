@@ -1,53 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import { View, StyleSheet, ActivityIndicator, Alert } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from "../AuthContext";
 import Begin from "@/components/Begin";
 import Dashboard from "@/components/DashBoard";
 import { useColorScheme } from '@/components/useColorScheme';
 import Colors from '@/constants/Colors';
-import { errorMesage } from "../alertMessages";
 import env from "../../env";
+import {fetchAccount} from "../reusable";
+import { UserData } from "../reusable";
 
-export interface UserData {
-    user: {
-        name: string,
-        token: string,
-        created_at: string
-    },
-    interactions: [
-        {
-            id: number,
-            content: [{[key : string] : string}],
-            ai_answer: {[key : string] : string},
-            created_at: string,
-            diagnostic: {[key : string] : string}
-        },
-    ]
-}
 
-const fetchAccount = async (token: string | undefined): Promise< UserData | null > => {
-    try {        
-        const response = await fetch(`${env.url_fetch}/user/info?token=${token}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            }
-        });
-
-        const data : UserData = await response.json();
-        return data;
-
-    } catch (error) {
-        errorMesage(error);
-        console.error(error);
-        return null;
-    }
-}
 
 export default function User() {
-    const [stateUser, setUser] = useState<UserData | null>(null);
+    const [stateUser, setUser] = useState<null | UserData | void>(null);
     const [stateVerify, setVerify] = useState<boolean | null>(null);
     const [stateSwitch, setSwitch] = useState<boolean>(false);
 
@@ -62,15 +28,19 @@ export default function User() {
     });
 
     useEffect(() => {
+
         const handleAuth = async () => {
             const token : string | null = await AsyncStorage.getItem(env.pass_key);
             //await AsyncStorage.clear()
-    
+            
+
             if(token == null || token == undefined){                
                 setVerify(false);
             } else {
-                const user_data = await fetchAccount(token);
+                const user_data = await fetchAccount(token,"0","5");
+
                 setUser(user_data);
+
                 setVerify(true);
             }
         }

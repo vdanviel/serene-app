@@ -31,13 +31,13 @@ export default function TabLayout() {
       try {
 
         const token = await AsyncStorage.getItem(env.pass_key);
-        
 
         if (token === null || token === undefined) {
           setLogged(false);
         } else {
           setLogged(true);
         }
+
       } catch (error) {
         console.error("Error fetching token:", error);
         setLogged(true);

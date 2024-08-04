@@ -49,7 +49,9 @@ export default function TabOneScreen() {
         />
       </View>
 
-      <IndexButton title='Get Started' onPress={goTouser}>
+      <IndexButton title='Get started' onPress={goTouser}>
+
+          <IconWrappper IconComponent={FontAwesome6} name='brain' color={"white"} size={30} />
 
       </IndexButton>
 

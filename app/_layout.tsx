@@ -8,6 +8,10 @@ import 'react-native-reanimated';
 import BackButton from "@/components/layout/BackButton";
 import { useColorScheme } from '@/components/useColorScheme';
 import ConfirmExitModal from "@/components/ConfirmExitModal";
+import { AuthContext } from "./AuthContext";
+import { UserData, fetchAccount } from "./reusable";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import env from "../env";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -53,6 +57,26 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
+
+  const [stateUser, setUser] = useState<UserData | void>(null);
+
+  useEffect(() => {
+
+    //RECUPERAR DADOS DO USUÁRIO..
+    const defineAccount = async () => {
+
+      const token : string | null = await AsyncStorage.getItem(env.pass_key);
+
+      const data : UserData| void = await fetchAccount(token,"0","5");
+
+      setUser(data);
+
+    }
+  
+    defineAccount()
+
+  },[])
+
   const confirmationExitForm = () => {
 
     setModalVisible(true);
@@ -60,16 +84,18 @@ function RootLayoutNav() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <AuthContext.Provider value={stateUser}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
 
-      <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>{/*modal de confirmação de saida do formulário de perguntas, quando aperta no butão back do header*/}
+        <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>{/*modal de confirmação de saida do formulário de perguntas, quando aperta no butão back do header*/}
 
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="diagnostic" options={{ headerShown: true, headerTitle:"Your diagnostic", animation: 'flip' }} />
-        <Stack.Screen name='form' options={{ headerShown:true, headerBackVisible: false, headerLeft: () => <BackButton onBack={confirmationExitForm}/>, headerTitle:"New Interaction", animation: 'flip' }} />
-      </Stack>
-    </ThemeProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="diagnostic" options={{ headerShown: true, headerTitle:"Your diagnostic", animation: 'flip' }} />
+          <Stack.Screen name='form' options={{ headerShown:true, headerBackVisible: false, headerLeft: () => <BackButton onBack={confirmationExitForm}/>, headerTitle:"New Interaction", animation: 'flip' }} />
+        </Stack>
+      </ThemeProvider>
+    </AuthContext.Provider>
   );
 
 }

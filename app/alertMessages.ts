@@ -1,10 +1,10 @@
 import { Alert } from "react-native";
 
-const errorMesage = (msg : any) => 
+const errorMesage = (msg : any, onOK : () => void) => 
     Alert.alert('Error', msg, [
       {
         text: 'OK',
-        onPress: () => console.log('OK Pressed'),
+        onPress: () => onOK,
         style:'default'
       }
     ]

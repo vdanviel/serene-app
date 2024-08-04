@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IconWrapperProps {
-  IconComponent: React.ComponentType<{ name: string; size: number; color: string }>;
+  IconComponent: React.ComponentType<any>;
   name: string;
   size?: number;
   color?: string;
