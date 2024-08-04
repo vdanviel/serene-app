@@ -7,8 +7,6 @@ import { useUserContext } from "../app/AuthContext";
 import IndexButton from "@/components/layout/IndexButton";
 import Colors from "@/constants/Colors";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-
 
 export default function Dashboard() {
 
@@ -25,7 +23,8 @@ export default function Dashboard() {
         welcome: {
             fontWeight: 'bold',
             fontSize: 30,
-            textAlign:'center'
+            textAlign:'center',
+            //fontFamily: 'skate'
         },
         serene:{
             color: colorScheme == "dark" ? Colors.dark.tint : Colors.light.tint,

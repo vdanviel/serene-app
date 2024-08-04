@@ -10,8 +10,6 @@ import env from "../../env";
 import {fetchAccount} from "../reusable";
 import { UserData } from "../reusable";
 
-
-
 export default function User() {
     const [stateUser, setUser] = useState<null | UserData | void>(null);
     const [stateVerify, setVerify] = useState<boolean | null>(null);

@@ -37,8 +37,9 @@ export default function UserInteractions() {
             backgroundColor: Colors.light.background,
             borderRadius: 10,
             marginVertical: 10,
+            marginHorizontal:10,
             elevation: 2,
-            padding: 10,
+            padding: 20,
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -91,9 +92,11 @@ export default function UserInteractions() {
             fontWeight: 'bold',
             fontSize: 24,
             marginBottom: 40,
+            //fontFamily: 'skate'
         },
         list:{
-            padding:10
+            padding:10,
+
         },
         initialConteiner:{
             marginHorizontal: 10,
@@ -104,6 +107,9 @@ export default function UserInteractions() {
             fontSize: 15,
             textAlign: 'center',
             color: Colors.default.background
+        },
+        previewInfoConteiner: {
+            backgroundColor: 'transparent'
         }
     });
 
@@ -196,24 +202,39 @@ export default function UserInteractions() {
                             
                             <FlatList
                                 renderItem={({ item, index }) => 
-                                    <Pressable android_ripple={{color: "#ffffff"}} style={interactStyle.cardInModal}>
-                                        <View>
-                                            <Text style={interactStyle.diagText}>"{item.diagnostic.length > 28 ? item.diagnostic.substring(0, item.diagnostic.length / 2) + "..." : item.diagnostic}"</Text>
-                                            <View style={interactStyle.registerTime}>
-                                                <IconWrapper name="stopwatch" IconComponent={FontAwesome6} size={10} />
-                                                <Text>{dates[index]}</Text>
+                                    (
+                                        <Pressable 
+                                            android_ripple={{ color: "#e0e0e0", borderless: false }} 
+                                            key={index} 
+                                            style={[interactStyle.card, interactStyle.card]}
+                                        >
+                                            <View style={interactStyle.previewInfoConteiner}>
+                                                <Text style={interactStyle.diagText}>
+                                                    {item.diagnostic.length > 28 ? 
+                                                        item.diagnostic.substring(0, item.diagnostic.length / 2) + "..." : 
+                                                        item.diagnostic}
+                                                </Text>
+                                                <View style={[interactStyle.registerTime, interactStyle.previewInfoConteiner]}>
+                                                    <IconWrapper name="stopwatch" IconComponent={FontAwesome6} size={10} />
+                                                    <Text>{dates[index]}</Text>
+                                                </View>
+                                                <Text>Press to see details</Text>
                                             </View>
-                                            <Text>Press to see details</Text>
-                                        </View>
-                                        <View style={interactStyle.icon}>
-                                            <IconWrapper name="comment-medical" IconComponent={FontAwesome6} size={35} color={Colors.default.tint} />
-                                        </View>
-                                    </Pressable>
+                                            <View style={[interactStyle.icon, interactStyle.previewInfoConteiner]}>
+                                                <IconWrapper 
+                                                    name="comment-medical" 
+                                                    IconComponent={FontAwesome6} 
+                                                    size={35} 
+                                                    color={Colors.default.tint} 
+                                                />
+                                            </View>
+                                        </Pressable>
+                                    )
                                 }
                                 data={stateInteracs}
                                 onEndReached={loadMoreDialogs}
                                 style={interactStyle.list}
-                            />
+                                />
                         </View>
 
 
@@ -223,19 +244,30 @@ export default function UserInteractions() {
                         <Text  style={interactStyle.textInit}>History</Text>
                         {
                             stateInitialInteracs.map((item, index) => (
-                                <Pressable android_ripple={{color: "#ffffff"}} key={index} style={[interactStyle.card, interactStyle.card]}>
-                                    <View>
+                                <Pressable 
+                                    android_ripple={{ color: "#e0e0e0", borderless: false }} 
+                                    key={index} 
+                                    style={[interactStyle.card, interactStyle.card]}
+                                >
+                                    <View style={interactStyle.previewInfoConteiner}>
                                         <Text style={interactStyle.diagText}>
-                                            {item.diagnostic.length > 28 ? item.diagnostic.substring(0, item.diagnostic.length / 2) + "..." : item.diagnostic}
+                                            {item.diagnostic.length > 28 ? 
+                                                item.diagnostic.substring(0, item.diagnostic.length / 2) + "..." : 
+                                                item.diagnostic}
                                         </Text>
-                                        <View style={interactStyle.registerTime}>
+                                        <View style={[interactStyle.registerTime, interactStyle.previewInfoConteiner]}>
                                             <IconWrapper name="stopwatch" IconComponent={FontAwesome6} size={10} />
                                             <Text>{dates[index]}</Text>
                                         </View>
                                         <Text>Press to see details</Text>
                                     </View>
-                                    <View style={interactStyle.icon}>
-                                        <IconWrapper name="comment-medical" IconComponent={FontAwesome6} size={35} color={Colors.default.tint} />
+                                    <View style={[interactStyle.icon, interactStyle.previewInfoConteiner]}>
+                                        <IconWrapper 
+                                            name="comment-medical" 
+                                            IconComponent={FontAwesome6} 
+                                            size={35} 
+                                            color={Colors.default.tint} 
+                                        />
                                     </View>
                                 </Pressable>
                             ))

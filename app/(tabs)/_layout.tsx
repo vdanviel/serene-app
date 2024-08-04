@@ -8,8 +8,9 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import env from "../../env";
+import { fetchAccount, UserData } from "../reusable";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
+// Você pode explorar as famílias e ícones incorporados na web em https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome5>['name'];
   color: string;
@@ -18,100 +19,99 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-
   const colorScheme = useColorScheme();
-  const [stateUserLogged, setLogged] = useState<boolean | null>(null);
+  const [stateUser, setUser] = useState<UserData>(null);
 
   useEffect(() => {
-    
-    setLogged(false);
-
     const isLogged = async () => {
-
       try {
-
         const token = await AsyncStorage.getItem(env.pass_key);
+        const user = await fetchAccount(token, "0", "0");
 
-        if (token === null || token === undefined) {
-          setLogged(false);
+        if (user && 'status' in user) {
+          setUser(null);
         } else {
-          setLogged(true);
+          setUser(user);
         }
-
       } catch (error) {
         console.error("Error fetching token:", error);
-        setLogged(true);
+        setUser(null);
       }
     };
 
     isLogged();
-    
-
   }, []);
 
-
-  if (stateUserLogged === null) {
-    return null;
-  }
-
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-      }}>
-
-      <Tabs.Screen
-        name="index"
-        options={{
-          headerTitle:"Welcome",
+  // Função para definir as telas
+  const renderTabs = () => {
+    const tabs = [
+      {
+        name: 'index',
+        options: {
+          headerTitle: "Welcome",
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        }}
-      />
-
-      <Tabs.Screen
-        name="user"
-        options={{
+        },
+      },
+      {
+        name: 'user',
+        options: {
           headerLeft: () => (
-            <View style={{marginLeft:22}}>
+            <View style={{ marginLeft: 22 }}>
               <IconWrapper
-                IconComponent={FontAwesome6} 
-                name="brain" 
-                color={colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint} 
-                size={24} 
+                IconComponent={FontAwesome6}
+                name="brain"
+                color={colorScheme === "dark" ? Colors.dark.tint : Colors.light.tint}
+                size={24}
               />
             </View>
           ),
           headerRight: () => (
-            stateUserLogged === true
-            ? (
-              <View style={{paddingRight:24}}>
-                <Button color={Colors.default.tint}  title='restart'/>
+            stateUser && (
+              <View style={{ paddingRight: 24 }}>
+                <Button color={Colors.default.tint} title='restart' />
               </View>
-            ) 
-            : null
+            )
           ),
           headerTitle: "Use Serene",
           headerTitleAllowFontScaling: true,
           headerTitleStyle: {
             color: colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint,
-            fontWeight: 'bold'
+            fontWeight: 'bold',
           },
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="brain" color={color} />,
-        }}
-      />
+        },
+      },
+    ];
 
-      <Tabs.Screen
-        name="access"
-        options={{
-          headerTitle:"Restrict Access",
+    if (stateUser) {
+      tabs.push({
+        name: 'access',
+        options: {
+          headerTitle: "Profile",
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="door-closed" color={color} />,
-        }}
-      />
+        },
+      });
+    }
 
+    return tabs;
+  };
+
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+      }}
+    >
+      {renderTabs().map((tab) => (
+        <Tabs.Screen
+          key={tab.name}
+          name={tab.name}
+          options={tab.options}
+        />
+      ))}
     </Tabs>
   );
-
 }

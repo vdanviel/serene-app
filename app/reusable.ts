@@ -6,6 +6,9 @@ interface BaseUserData {
         name: string;
         token: string;
         created_at: string;
+        total_interactions: number;
+        total_answers: number;
+        chances_anxiety: number
     };
     interactions: Interaction[]
 }
