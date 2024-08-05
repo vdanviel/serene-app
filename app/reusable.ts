@@ -42,9 +42,9 @@ export async function fetchAccount(token: string | null, offset: string = "0", l
         return data;
 
     } catch (error) {
-        errorMesage(error, () => {});
-        console.error(error);
+
         return null;
+        
     }
 }
 

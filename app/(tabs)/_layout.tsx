@@ -1,16 +1,15 @@
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { Tabs } from 'expo-router';
-import { Button, View } from 'react-native';
+import { Tabs, Stack, useRouter } from 'expo-router';
+import { Button, View, ActivityIndicator } from 'react-native';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import IconWrapper from "@/components/IconWrapper";
-import { FontAwesome6 } from "@expo/vector-icons";
-import { useEffect, useState } from 'react';
+import { FontAwesome6,FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import env from "../../env";
-import { fetchAccount, UserData } from "../reusable";
+import { useEffect, useState } from "react";
+import env from '../../env'
 
-// Você pode explorar as famílias e ícones incorporados na web em https://icons.expo.fyi/
+// Você pode explorar as famílias de ícones e ícones integrados na web em https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome5>['name'];
   color: string;
@@ -20,42 +19,28 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [stateUser, setUser] = useState<UserData>(null);
 
-  useEffect(() => {
-    const isLogged = async () => {
-      try {
-        const token = await AsyncStorage.getItem(env.pass_key);
-        const user = await fetchAccount(token, "0", "0");
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+      }}
+    >
 
-        if (user && 'status' in user) {
-          setUser(null);
-        } else {
-          setUser(user);
-        }
-      } catch (error) {
-        console.error("Error fetching token:", error);
-        setUser(null);
-      }
-    };
-
-    isLogged();
-  }, []);
-
-  // Função para definir as telas
-  const renderTabs = () => {
-    const tabs = [
-      {
-        name: 'index',
-        options: {
-          headerTitle: "Welcome",
+      <Tabs.Screen
+        name="index"
+        options={{
+          headerShown: false,
           tabBarShowLabel: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        },
-      },
-      {
-        name: 'user',
-        options: {
+          tabBarStyle: {display: 'none'},//oculta tab bar no começo
+          tabBarButton: () => null, // Oculta o ícone da tab
+          unmountOnBlur: true, // Exemplo de outra opção que você pode ter
+        }}
+      />
+
+      <Tabs.Screen
+        name="main"
+        options={{
           headerLeft: () => (
             <View style={{ marginLeft: 22 }}>
               <IconWrapper
@@ -66,52 +51,38 @@ export default function TabLayout() {
               />
             </View>
           ),
-          headerRight: () => (
-            stateUser && (
-              <View style={{ paddingRight: 24 }}>
-                <Button color={Colors.default.tint} title='restart' />
-              </View>
-            )
-          ),
           headerTitle: "Use Serene",
           headerTitleAllowFontScaling: true,
           headerTitleStyle: {
             color: colorScheme === 'dark' ? Colors.dark.tint : Colors.light.tint,
-            fontWeight: 'bold',
+            fontWeight: 'bold'
           },
           tabBarShowLabel: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="brain" color={color} />,
-        },
-      },
-    ];
+          tabBarIcon: ({ color }) => <IconWrapper IconComponent={FontAwesome6} name="brain" color={color} />,
+        }}
+      />
 
-    if (stateUser) {
-      tabs.push({
-        name: 'access',
-        options: {
-          headerTitle: "Profile",
+      <Tabs.Screen
+        name="history"
+        options={{
+          headerTitle: "History",
           tabBarShowLabel: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="door-closed" color={color} />,
-        },
-      });
-    }
+          tabBarIcon: ({ color }) => <IconWrapper IconComponent={FontAwesome} name="history" color={color} />,
+        }}
+      />
 
-    return tabs;
-  };
+      <Tabs.Screen
+        name="profile"
+        options={{
+          headerTitle: "Your profile",
+          tabBarShowLabel: false,
+          tabBarIcon: ({ color }) => <IconWrapper IconComponent={FontAwesome6} name="user" color={color} />,
+        }}
+      />
 
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-      }}
-    >
-      {renderTabs().map((tab) => (
-        <Tabs.Screen
-          key={tab.name}
-          name={tab.name}
-          options={tab.options}
-        />
-      ))}
+
+
     </Tabs>
   );
+
 }

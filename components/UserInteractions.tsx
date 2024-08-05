@@ -20,7 +20,6 @@ export default function UserInteractions() {
 
     const interactStyle = StyleSheet.create({
         scroll: {
-            margin: 12,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center'
@@ -181,110 +180,43 @@ export default function UserInteractions() {
             );
 
             return (
-                <View style={interactStyle.scroll}>
-
-                    <Modal
-                        visible={stateModalInteracs}
-                        animationType={'fade'}
-                        onRequestClose={() => setModalInteracs(false)}
-                    >
-                        <View style={interactStyle.modalConteiner}>
-
-                            <View style={interactStyle.header}>
-
-                                <Text  style={interactStyle.textHeader}>Interactions</Text>
-                                
-                                <Pressable android_ripple={{color: "#ddd", borderless: true, foreground: true}} onPress={() => setModalInteracs(false)}>
-                                    <IconWrapper name="window-close" IconComponent={MaterialCommunityIcons} size={32}/>
-                                </Pressable>
-
-                            </View>
-                            
-                            <FlatList
-                                renderItem={({ item, index }) => 
-                                    (
-                                        <Pressable 
-                                            android_ripple={{ color: "#e0e0e0", borderless: false }} 
-                                            key={index} 
-                                            style={[interactStyle.card, interactStyle.card]}
-                                        >
-                                            <View style={interactStyle.previewInfoConteiner}>
-                                                <Text style={interactStyle.diagText}>
-                                                    {item.diagnostic.length > 28 ? 
-                                                        item.diagnostic.substring(0, item.diagnostic.length / 2) + "..." : 
-                                                        item.diagnostic}
-                                                </Text>
-                                                <View style={[interactStyle.registerTime, interactStyle.previewInfoConteiner]}>
-                                                    <IconWrapper name="stopwatch" IconComponent={FontAwesome6} size={10} />
-                                                    <Text>{dates[index]}</Text>
-                                                </View>
-                                                <Text>Press to see details</Text>
-                                            </View>
-                                            <View style={[interactStyle.icon, interactStyle.previewInfoConteiner]}>
-                                                <IconWrapper 
-                                                    name="comment-medical" 
-                                                    IconComponent={FontAwesome6} 
-                                                    size={35} 
-                                                    color={Colors.default.tint} 
-                                                />
-                                            </View>
-                                        </Pressable>
-                                    )
-                                }
-                                data={stateInteracs}
-                                onEndReached={loadMoreDialogs}
-                                style={interactStyle.list}
-                                />
-                        </View>
-
-
-                    </Modal>
-
-                    <View style={interactStyle.initialConteiner}>
-                        <Text  style={interactStyle.textInit}>History</Text>
-                        {
-                            stateInitialInteracs.map((item, index) => (
-                                <Pressable 
-                                    android_ripple={{ color: "#e0e0e0", borderless: false }} 
-                                    key={index} 
-                                    style={[interactStyle.card, interactStyle.card]}
-                                >
-                                    <View style={interactStyle.previewInfoConteiner}>
-                                        <Text style={interactStyle.diagText}>
-                                            {item.diagnostic.length > 28 ? 
-                                                item.diagnostic.substring(0, item.diagnostic.length / 2) + "..." : 
-                                                item.diagnostic}
-                                        </Text>
-                                        <View style={[interactStyle.registerTime, interactStyle.previewInfoConteiner]}>
-                                            <IconWrapper name="stopwatch" IconComponent={FontAwesome6} size={10} />
-                                            <Text>{dates[index]}</Text>
-                                        </View>
-                                        <Text>Press to see details</Text>
+                        
+                <FlatList
+                    renderItem={({ item, index }) => 
+                        (
+                            <Pressable 
+                                android_ripple={{ color: "#e0e0e0", borderless: false }} 
+                                key={index} 
+                                style={[interactStyle.card, interactStyle.card]}
+                            >
+                                <View style={interactStyle.previewInfoConteiner}>
+                                    <Text style={interactStyle.diagText}>
+                                        {item.diagnostic.length > 28 ? 
+                                            item.diagnostic.substring(0, item.diagnostic.length / 2) + "..." : 
+                                            item.diagnostic}
+                                    </Text>
+                                    <View style={[interactStyle.registerTime, interactStyle.previewInfoConteiner]}>
+                                        <IconWrapper name="stopwatch" IconComponent={FontAwesome6} size={10} />
+                                        <Text>{dates[index]}</Text>
                                     </View>
-                                    <View style={[interactStyle.icon, interactStyle.previewInfoConteiner]}>
-                                        <IconWrapper 
-                                            name="comment-medical" 
-                                            IconComponent={FontAwesome6} 
-                                            size={35} 
-                                            color={Colors.default.tint} 
-                                        />
-                                    </View>
-                                </Pressable>
-                            ))
-                        }
-                    </View>
+                                    <Text>Press to see details</Text>
+                                </View>
+                                <View style={[interactStyle.icon, interactStyle.previewInfoConteiner]}>
+                                    <IconWrapper 
+                                        name="comment-medical" 
+                                        IconComponent={FontAwesome6} 
+                                        size={35} 
+                                        color={Colors.default.tint} 
+                                    />
+                                </View>
+                            </Pressable>
+                        )
+                    }
+                    data={stateInteracs}
+                    onEndReached={loadMoreDialogs}
+                    style={interactStyle.list}
+                    />
 
-                    <IndexButton 
-                        title="See interactions"
-                        onPress={() => setModalInteracs(true)}
-                        margin={0}
-                        align="center"
-                        buttonStyle={{width:'46%', padding:5}}
-                    >
-                        <IconWrapper name="checklist" IconComponent={MaterialIcons } size={30} color={"white"} />
-                    </IndexButton>
-
-                </View>
             );
 
         }else{

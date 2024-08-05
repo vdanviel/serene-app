@@ -15,6 +15,7 @@ export default function Dashboard() {
 
     const styles = StyleSheet.create({
         container: {
+            flex: 1,
             backgroundColor: colorScheme == 'dark' ? Colors.dark.background : Colors.light.background,
             display: 'flex',
             justifyContent: 'center',
@@ -37,6 +38,9 @@ export default function Dashboard() {
             flexDirection:'row',
             alignItems: 'center',
             gap:8
+        },
+        welcomeConteiner:{
+            marginVertical: 40
         }
     });
 
@@ -49,13 +53,13 @@ export default function Dashboard() {
     return (
         <ScrollView contentContainerStyle={styles.container}>
 
-            <Text style={styles.welcome}>Hello {client.user.name}!</Text>
+            <View style={styles.welcomeConteiner}>
+                <Text style={styles.welcome}>Hello {client.user.name}!</Text>
 
-            <IndexButton title="Create a new interaction" onPress={() => router.push('/form')}>
-                <IconWrapper IconComponent={FontAwesome6} name="heart-circle-plus" color="white" />
-            </IndexButton>
-
-            <UserInteractions/>
+                <IndexButton buttonStyle={{marginBottom:0}} title="Create a new interaction" onPress={() => router.push('/form')}>
+                    <IconWrapper IconComponent={FontAwesome6} name="heart-circle-plus" color="white" />
+                </IndexButton>
+            </View>
 
         </ScrollView>
     );

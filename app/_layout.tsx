@@ -59,24 +59,6 @@ function RootLayoutNav() {
 
 
   const [stateUser, setUser] = useState<UserData | void>(null);
-
-  useEffect(() => {
-
-    //RECUPERAR DADOS DO USUÁRIO..
-    const defineAccount = async () => {
-
-      const token : string | null = await AsyncStorage.getItem(env.pass_key);
-
-      const data : UserData| void = await fetchAccount(token,"0","5");
-
-      setUser(data);
-
-    }
-  
-    defineAccount()
-
-  },[])
-
   const confirmationExitForm = () => {
 
     setModalVisible(true);
