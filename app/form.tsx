@@ -262,14 +262,24 @@ const Form = () => {
           container: {
             padding: 20,
             margin: 20,
+            paddingTop:0,
+            marginTop:0
           }
     })
+
+    const loadingStyles = StyleSheet.create({
+        container: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+      });
 
     if (stateGenerateQuestionsIsLoading) {
         
         return(
-            <View style={styles.container}>
-                <ActivityIndicator size={50} color={colorScheme == 'dark' ? Colors.dark.tint : Colors.light.tint}/>
+            <View style={loadingStyles.container}>
+                <ActivityIndicator size={'large'} color={colorScheme == 'dark' ? Colors.dark.tint : Colors.light.tint}/>
             </View>
         )
 
@@ -333,6 +343,10 @@ const Form = () => {
             <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={styles.container}>{/*keyboardShouldPersistTaps - https://reactnative.dev/docs/scrollview#keyboardshouldpersisttaps* (usado para quando o usuario clicar em "Save do Card>Modal>IndexButton ele funcionar pois teclado não abaixa")*/}
 
                 <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
+
+                <Text style={{textAlign:'center', padding:20}}>
+                    To ensure you get the most accurate and realistic response possible from my   application, it is essential that you complete the form with complete transparency and honesty.
+                </Text>
 
                 {
                     stateDialog.map((item, index) => (
