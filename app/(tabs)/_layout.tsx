@@ -34,7 +34,6 @@ export default function TabLayout() {
           tabBarShowLabel: false,
           tabBarStyle: {display: 'none'},//oculta tab bar no começo
           tabBarButton: () => null, // Oculta o ícone da tab
-          unmountOnBlur: true, // Exemplo de outra opção que você pode ter
         }}
       />
 
@@ -79,9 +78,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconWrapper IconComponent={FontAwesome6} name="user" color={color} />,
         }}
       />
-
-
-
+      
     </Tabs>
   );
 

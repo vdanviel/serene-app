@@ -8,10 +8,12 @@ import 'react-native-reanimated';
 import BackButton from "@/components/layout/BackButton";
 import { useColorScheme } from '@/components/useColorScheme';
 import ConfirmExitModal from "@/components/ConfirmExitModal";
-import { AuthContext } from "./AuthContext";
-import { UserData, fetchAccount } from "./reusable";
+import { AuthContext, AuthProvider } from "./AuthContext";
+import { UserData } from "./reusable";
+import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import env from "../env";
+import { fetchAccount } from "./reusable";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -57,18 +59,22 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-
-  const [stateUser, setUser] = useState<UserData | void>(null);
   const confirmationExitForm = () => {
 
     setModalVisible(true);
 
   }
 
-  return (
-    <AuthContext.Provider value={stateUser}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+  /*
+      CONTEXT EM REACT:
+      é uma maneira de acessar dados sem precisar ficar passando de props em props.
+      vc define um componente, e TODOS os filhos desse componente tem acesso a esse dado.
+      acesse app/AuthController.ts
+  */
 
+  //para acessar essas paginas o usuário precisa estar logado..
+  return (
+    <AuthProvider>{/*<AuthContext.Provider value={stateUser}> - está definindo o provedor de onde vamos consumir os dados, que no caso é o valor de "value", que no caso é o fetch dos dados do user..*/}
         <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>{/*modal de confirmação de saida do formulário de perguntas, quando aperta no butão back do header*/}
 
         <Stack>
@@ -76,8 +82,7 @@ function RootLayoutNav() {
           <Stack.Screen name="diagnostic" options={{ headerShown: true, headerTitle:"Your diagnostic", animation: 'flip' }} />
           <Stack.Screen name='form' options={{ headerShown:true, headerBackVisible: false, headerLeft: () => <BackButton onBack={confirmationExitForm}/>, headerTitle:"New Interaction", animation: 'flip' }} />
         </Stack>
-      </ThemeProvider>
-    </AuthContext.Provider>
+    </AuthProvider>
   );
 
 }

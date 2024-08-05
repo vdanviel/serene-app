@@ -10,7 +10,7 @@ import IndexButton from "@/components/layout/IndexButton";
 import Presentation from "@/components/Presentation";
 import env from "../../env";
 
-export default function Begin() {
+export default function TabOneScreen() {
     const router = useRouter();
     const colorScheme = useColorScheme();
     const [stateText, setText] = useState('');
@@ -53,7 +53,7 @@ export default function Begin() {
         if (token !== null) {
 
             router.push("main");
-            
+
         }
   
       }

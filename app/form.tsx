@@ -191,8 +191,6 @@ const Form = () => {
     const [stateRegisterDiagIsLoading, setRegisterDiagIsLoading] = useState<boolean>(false);
     const [stateGenerateQuestionsIsLoading, setGenerateQuestionsIsLoading] = useState<boolean>(true);
     const [stateIsReleased, setIsReleased] = useState<boolean>(false);
-
-    const client = useUserContext();
     
 
     const createAnswerHandler = (index : number) => {//index - o numero q index (para saber o numero da pergunta..)

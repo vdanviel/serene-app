@@ -91,7 +91,7 @@ export default function Presentation() {
 
             <View style={styles.advice} >
 
-                <IconWrapper IconComponent={FontAwesome5} name='brain' color={Colors.default.background} size={30} />
+                <IconWrapper IconComponent={FontAwesome5} name='brain' color={Colors.default.tint} size={30} />
                 <ExternalLink href='https://vdanviel.github.io/' style={styles.text}>Serene is a psycologist AI that guess if you have ansiety based on a quickmade form. It's develop with <Text style={styles.italic}>React Native</Text> / <Text style={styles.italic}>Symfony</Text> (as API) and <Text style={styles.italic}>Postgre</Text> as its Database. Made by <Text style={styles.italic}>vdanviel</Text>. Click to see more about me!</ExternalLink>
 
             </View>
