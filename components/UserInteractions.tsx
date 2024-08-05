@@ -28,9 +28,9 @@ export default function UserInteractions() {
             margin: 20
         },
         containerLoading: {
+            flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: colorScheme === 'dark' ? Colors.dark.background : Colors.light.background,
         },
         card: {
             backgroundColor: Colors.light.background,
@@ -167,7 +167,7 @@ export default function UserInteractions() {
 
         return(
             <View style={interactStyle.containerLoading}>
-                <ActivityIndicator size={50} color={colorScheme == 'dark' ? Colors.dark.tint : Colors.light.tint}/>
+                <ActivityIndicator size={'large'} color={colorScheme == 'dark' ? Colors.dark.tint : Colors.light.tint}/>
             </View>
         )
 
@@ -224,7 +224,7 @@ export default function UserInteractions() {
             return (
                 <View style={interactStyle.advice}>
                     <IconWrapper IconComponent={FontAwesome6} name="circle-minus" color={Colors.default.background} size={20} />
-                    <Text style={{ textAlign: "center" }}>You have no interactions yet! Create one top button.</Text>
+                    <Text style={{ textAlign: "center" }}>You have no interactions yet! Create one on the main page.</Text>
                 </View>
             );
 

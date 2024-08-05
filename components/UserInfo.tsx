@@ -1,10 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import React, {useState} from 'react';
+import { View, Text, StyleSheet, Modal, ActivityIndicator } from 'react-native';
+import { MaterialIcons,MaterialCommunityIcons , FontAwesome } from '@expo/vector-icons';
 import { useUserContext } from "../app/AuthContext";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from '@/components/useColorScheme';
-
+import IndexButton from "@/components/layout/IndexButton";
+import IconWrapper from "@/components/IconWrapper";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from "expo-router";
 
 const UserProfile: React.FC= () => {
 
@@ -17,7 +20,6 @@ const UserProfile: React.FC= () => {
   });
 
   const colorScheme = useColorScheme();
-
   const client = useUserContext();
 
   if (client === null) {
@@ -28,33 +30,70 @@ const UserProfile: React.FC= () => {
     )
   }
 
+  const router = useRouter();
+  const logoutAccount = async () => {
+    
+    await AsyncStorage.clear();
+
+    router.push('/index');
+
+
+  }
+
+  const [stateModal, setModal] = useState<boolean>(false);
+
   return (
     <View style={styles.container}>
+
+      <Modal animationType="fade" transparent={true} visible={stateModal}>
+        <View onTouchStart={() => setModal(false)} style={styles.centeredView}>
+          <View onTouchStart={(e) => e.stopPropagation()} style={styles.modalView}>
+            <Text style={styles.modalTitle}>Are you sure you want restart yout Serene app?</Text>
+            <Text style={styles.modalText}>You are going to lose all your progress.</Text>
+
+            <View style={styles.buttonRow}>
+                <IndexButton
+                  title="Exit Form"
+                  onPress={logoutAccount}
+                  margin={0}
+                  buttonStyle={styles.buttonSpacing}
+                />
+                <IndexButton title="Cancel" onPress={() => setModal(false)} buttonStyle={styles.buttonSpacing} margin={0} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <View style={styles.header}>
-        <MaterialIcons name="person" size={50} color="black" />
+        <IconWrapper name="person" IconComponent={MaterialIcons} size={50} color="black" />
         <Text style={styles.name}>{client.user.name}</Text>
       </View>
       <View style={styles.details}>
         <View style={styles.tag}>
-          <FontAwesome name="calendar" size={20} color="white" />
-          <Text style={styles.tagText}>{`Joined: ${new Date(client.user.chances_anxiety).toLocaleDateString()}`}</Text>
+          <IconWrapper name="calendar" IconComponent={FontAwesome} size={20} color="black" />
+          <Text style={styles.tagText}>{`Joined: ${new Date(client.user.created_at).toDateString()}`}</Text>
         </View>
         <View style={styles.tag}>
-          <FontAwesome name="comments" size={20} color="white" />
+          <IconWrapper name="comments" IconComponent={FontAwesome} size={20} color="black" />
           <Text style={styles.tagText}>{`Interactions: ${client.user.total_interactions}`}</Text>
         </View>
         <View style={styles.tag}>
-          <FontAwesome name="question" size={20} color="white" />
+          <IconWrapper name="question" IconComponent={FontAwesome} size={20} color="black" />
           <Text style={styles.tagText}>{`Answers: ${client.user.total_answers}`}</Text>
         </View>
         <View style={styles.tag}>
-          <FontAwesome name="medkit" size={20} color="white" />
+          <IconWrapper name="medkit" IconComponent={FontAwesome} size={20} color="black" />
           <Text style={styles.tagText}>{`Chances of Anxiety: ${client.user.chances_anxiety}%`}</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => console.log('Logout')}>
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
+
+      <Text style={{textAlign:'center'}}>
+        The "anxiety odds" calculation displayed by my app is based on an algorithm that analyzes the number of positive anxiety diagnoses compared to negative ones. It is important to understand that this analysis is not an accurate clinical assessment of the user's anxiety.
+      </Text>
+
+      <IndexButton title='Restart your Serene' align='center' onPress={() => console.log('Logout')}>
+        <IconWrapper name="restart" IconComponent={MaterialCommunityIcons} size={30} color="white" />
+      </IndexButton>
     </View>
   );
 };
@@ -63,7 +102,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: 'white',
   },
   header: {
     flexDirection: 'row',
@@ -81,25 +120,61 @@ const styles = StyleSheet.create({
   tag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#333',
+    backgroundColor: Colors.default.background,
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
   },
   tagText: {
-    color: 'white',
+    color: '#000',
     marginLeft: 10,
     fontSize: 16,
   },
-  button: {
-    backgroundColor: '#e63946',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
   buttonText: {
-    color: 'white',
+    color: '#000',
     fontSize: 18,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffffcc',
+  },
+  modalText: {
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#333',
+    fontSize: 16,
+  },
+  modalTitle: {
+    marginBottom: 15,
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#000',
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap:10
+  },
+  buttonSpacing: {
+    marginHorizontal: 10,
   },
 });
 

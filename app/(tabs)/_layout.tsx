@@ -73,7 +73,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          headerTitle: "Your profile",
+          headerTitle: "Your Profile",
           tabBarShowLabel: false,
           tabBarIcon: ({ color }) => <IconWrapper IconComponent={FontAwesome6} name="user" color={color} />,
         }}
