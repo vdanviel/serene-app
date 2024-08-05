@@ -101,7 +101,7 @@ const Card = ({ question, onAnswer }: CardInterface) => {
             <Text style={cardStyles.question}>{question}</Text>
 
             <IndexButton
-                title={answer ? 'Done' : 'Provide a answer'}
+                title={answer ? 'Done' : 'Provide an answer'}
                 margin={0}
                 bg={answer ? Colors.default.tint : 'transparent'}
                 textColor={answer ? 'white' : Colors.default.tint}
@@ -319,7 +319,7 @@ const Form = () => {
                         pathname: '/diagnostic',
                         params: {
                             description: data.description,
-                            result: (data.result)
+                            result: data.result
                         },
                     });
     

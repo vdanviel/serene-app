@@ -1,4 +1,5 @@
 import { Text, View, StyleSheet, Image,ActivityIndicator } from "react-native";
+import { Link } from "expo-router";
 import { useRouter } from 'expo-router';
 import UserInteractions from "@/components/UserInteractions";
 import { useColorScheme } from '@/components/useColorScheme';
@@ -8,6 +9,7 @@ import IndexButton from "@/components/layout/IndexButton";
 import Colors from "@/constants/Colors";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useState, useEffect } from 'react';
+import * as WebBrowser from 'expo-web-browser';
 
 export default function Dashboard() {
 
@@ -86,6 +88,7 @@ export default function Dashboard() {
             flex: 1,
             alignItems: 'center',
             justifyContent: 'center',
+            backgroundColor: colorScheme == 'dark' ? Colors.dark.background : Colors.light.background,
         },
     });
 
@@ -99,6 +102,13 @@ export default function Dashboard() {
 
     return (
         <View style={styles.container}>
+
+            <Text style={{textAlign: 'center', padding: 20}}>
+                Artificial Intelligence (AI) has made remarkable strides in recent years, enhancing our capabilities in numerous fields such as healthcare, finance, and customer service. However, despite its impressive advancements, AI cannot replace actual specialists. 
+            </Text>
+
+            <Link target="_blank" href={"https://www.nami.org/"}  style={{textAlign: 'center', color: Colors.default.tint}}>If you need more information, access NAMI website. (National Alliance on Mental Ilness)</Link>
+
 
             <View style={styles.welcomeContainer}>
                 <Text style={styles.welcome}>Hello {client.user.name}!</Text>

@@ -26,15 +26,17 @@ const Diagnostic: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.headerContainer}>
-        <Ionicons
-          name={result ? 'sad-outline' : 'happy-outline'}
+        <IconWrapper
+          name={result == "true" ? 'sad-outline' : 'happy-outline'}
           size={32}
+          IconComponent={Ionicons}
           color={Colors.default.tint}
         />
         <Text style={styles.headerText}>
-          {result ? "You have anxiety." : "You don't have anxiety."}
+          {result == "true" ? "You have anxiety." : "You don't have anxiety."}
         </Text>
       </View>
+      
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <View style={styles.markdownContainer}>
           <Markdown style={styles.contentText}>
@@ -42,6 +44,7 @@ const Diagnostic: React.FC = () => {
           </Markdown>
         </View>
       </ScrollView>
+
       <IndexButton title='I understood.' onPress={() => router.push('/main')}>
         <IconWrapper name='brain' IconComponent={FontAwesome5} color={'white'}/>
       </IndexButton>
@@ -72,7 +75,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   markdownContainer: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: Colors.default.background,
     borderRadius: 16,
     padding: 16,
   },

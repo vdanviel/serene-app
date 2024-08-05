@@ -17,6 +17,7 @@ const UserProfile: React.FC= () => {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: colorScheme == 'dark' ? Colors.dark.background : Colors.light.background,
     },
   });
 

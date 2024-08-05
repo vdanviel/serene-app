@@ -27,7 +27,7 @@ const BackButton = ({ onBack = () => useRouter().back() }: BackButtonInterface) 
 
 const styles = StyleSheet.create({
     button: {
-        marginRight: 10,
+        marginRight: 30,
         //marginLeft: 10
 
     } as ViewStyle,

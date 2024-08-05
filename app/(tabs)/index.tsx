@@ -8,14 +8,17 @@ import { useColorScheme } from '@/components/useColorScheme';
 import IndexInput from "@/components/layout/IndexInput";
 import IndexButton from "@/components/layout/IndexButton";
 import Presentation from "@/components/Presentation";
+import IconWrapper from "@/components/IconWrapper";
 import env from "../../env";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function TabOneScreen() {
     const router = useRouter();
     const colorScheme = useColorScheme();
     const [stateText, setText] = useState('');
     const [stateError, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);  // Adiciona estado de carregamento
+    const [ButtonisLoading, setButtonIsLoading] = useState(false);  // Adiciona estado de carregamento
+    const [VerifyisLoading, setVerifyIsLoading] = useState(true);  // Adiciona estado de carregamento
 
     const styles = StyleSheet.create({
         container: {
@@ -45,18 +48,20 @@ export default function TabOneScreen() {
     });
 
     useEffect(() => {
-  
-      const verifyUser = async () => {
         
-        await AsyncStorage.clear();
+      const verifyUser = async () => {
+
+        //await AsyncStorage.clear();
         const token = await AsyncStorage.getItem(env.pass_key);
-  
+
         if (token !== null) {
 
             router.push("main");
 
         }
-  
+        
+        setVerifyIsLoading(false);
+
       }
   
       verifyUser();
@@ -65,7 +70,7 @@ export default function TabOneScreen() {
 
     const registerAccount = async (): Promise<void> => {
         setError(null);
-        setIsLoading(true);  // Ativa o carregamento
+        setButtonIsLoading(true);  // Ativa o carregamento
 
         try {
             const response = await fetch(`${env.url_fetch}/user/register`, {
@@ -93,10 +98,28 @@ export default function TabOneScreen() {
             console.error(error);
             setError('An error occurred. Please try again.');
         } finally {
-            setIsLoading(false);  // Desativa o carregamento
+            setButtonIsLoading(false);  // Desativa o carregamento
         }
 
         setText('');
+    }
+
+    const loadingStyles = StyleSheet.create({
+        container: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: colorScheme == 'dark' ? Colors.dark.background : Colors.light.background,
+        },
+    });
+
+
+    if (VerifyisLoading) {
+      return(
+          <View style={loadingStyles.container}>
+              <IconWrapper IconComponent={FontAwesome5} name='brain' color={Colors.default.tint} size={50} />
+          </View>
+      )
     }
 
     return (
@@ -116,10 +139,10 @@ export default function TabOneScreen() {
             <View style={styles.buttonContainer}>
 
                 <IndexButton 
-                    title={isLoading ? "" :"Get Started!" }
+                    title={ButtonisLoading ? "" :"Get Started!" }
                     margin={0} 
                     onPress={registerAccount} 
-                    activate={!isLoading}
+                    activate={!ButtonisLoading}
                     buttonStyle={
                         {
                             width:150
@@ -128,7 +151,7 @@ export default function TabOneScreen() {
                     align="center"
                 >
                     {
-                        isLoading 
+                        ButtonisLoading 
                         ?
                         <ActivityIndicator size={15} color={"white"} />
                         :

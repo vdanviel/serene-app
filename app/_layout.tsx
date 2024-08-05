@@ -1,5 +1,4 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -8,12 +7,7 @@ import 'react-native-reanimated';
 import BackButton from "@/components/layout/BackButton";
 import { useColorScheme } from '@/components/useColorScheme';
 import ConfirmExitModal from "@/components/ConfirmExitModal";
-import { AuthContext, AuthProvider } from "./AuthContext";
-import { UserData } from "./reusable";
-import { useRouter } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import env from "../env";
-import { fetchAccount } from "./reusable";
+import {AuthProvider } from "./AuthContext";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -83,6 +77,7 @@ function RootLayoutNav() {
           <Stack.Screen name="diagnostic" options={{ headerShown: false, headerTitle:"Your diagnostic", animation: 'flip' }} />
           <Stack.Screen name='form' options={{ headerShown:true, headerBackVisible: false, headerLeft: () => <BackButton onBack={confirmationExitForm}/>, headerTitle:"New Interaction", animation: 'flip' }} />
         </Stack>
+
     </AuthProvider>
   );
 
