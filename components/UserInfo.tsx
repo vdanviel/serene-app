@@ -8,6 +8,7 @@ import IndexButton from "@/components/layout/IndexButton";
 import IconWrapper from "@/components/IconWrapper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from "expo-router";
+import * as Updates from 'expo-updates';
 
 const UserProfile: React.FC= () => {
 
@@ -35,9 +36,9 @@ const UserProfile: React.FC= () => {
     
     await AsyncStorage.clear();
 
-    router.push('/index');
+    await Updates.reloadAsync();
 
-
+    setModal(false)
   }
 
   const [stateModal, setModal] = useState<boolean>(false);
@@ -53,7 +54,7 @@ const UserProfile: React.FC= () => {
 
             <View style={styles.buttonRow}>
                 <IndexButton
-                  title="Exit Form"
+                  title="Restart"
                   onPress={logoutAccount}
                   margin={0}
                   buttonStyle={styles.buttonSpacing}
@@ -91,7 +92,7 @@ const UserProfile: React.FC= () => {
         The "anxiety odds" calculation displayed by my app is based on an algorithm that analyzes the number of positive anxiety diagnoses compared to negative ones. It is important to understand that this analysis is not an accurate clinical assessment of the user's anxiety.
       </Text>
 
-      <IndexButton title='Restart your Serene' align='center' onPress={() => console.log('Logout')}>
+      <IndexButton title='Restart your Serene' align='center' onPress={() => setModal(true)}>
         <IconWrapper name="restart" IconComponent={MaterialCommunityIcons} size={30} color="white" />
       </IndexButton>
     </View>

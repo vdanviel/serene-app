@@ -47,7 +47,8 @@ export default function TabOneScreen() {
     useEffect(() => {
   
       const verifyUser = async () => {
-  
+        
+        await AsyncStorage.clear();
         const token = await AsyncStorage.getItem(env.pass_key);
   
         if (token !== null) {
@@ -94,6 +95,8 @@ export default function TabOneScreen() {
         } finally {
             setIsLoading(false);  // Desativa o carregamento
         }
+
+        setText('');
     }
 
     return (

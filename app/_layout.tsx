@@ -79,7 +79,8 @@ function RootLayoutNav() {
 
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="diagnostic" options={{ headerShown: true, headerTitle:"Your diagnostic", animation: 'flip' }} />
+          <Stack.Screen name="interac" options={{ headerShown: true, headerTitle: 'Interaction' }} />
+          <Stack.Screen name="diagnostic" options={{ headerShown: false, headerTitle:"Your diagnostic", animation: 'flip' }} />
           <Stack.Screen name='form' options={{ headerShown:true, headerBackVisible: false, headerLeft: () => <BackButton onBack={confirmationExitForm}/>, headerTitle:"New Interaction", animation: 'flip' }} />
         </Stack>
     </AuthProvider>

@@ -188,12 +188,18 @@ export default function UserInteractions() {
                                 android_ripple={{ color: "#e0e0e0", borderless: false }} 
                                 key={index} 
                                 style={[interactStyle.card, interactStyle.card]}
+                                onPress={() => router.push({
+                                    pathname: "/interac",
+                                    params:{
+                                        id: item.id
+                                    }
+                                })}
                             >
                                 <View style={interactStyle.previewInfoConteiner}>
                                     <Text style={interactStyle.diagText}>
-                                        {item.diagnostic.length > 28 ? 
+                                        "{item.diagnostic.length > 28 ? 
                                             item.diagnostic.substring(0, item.diagnostic.length / 2) + "..." : 
-                                            item.diagnostic}
+                                            item.diagnostic}"
                                     </Text>
                                     <View style={[interactStyle.registerTime, interactStyle.previewInfoConteiner]}>
                                         <IconWrapper name="stopwatch" IconComponent={FontAwesome6} size={10} />

@@ -137,7 +137,7 @@ const Card = ({ question, onAnswer }: CardInterface) => {
                             onChangeText={text => handleChangeText(text)}
                             textAlignVertical="top"
                             selectionColor={colorScheme == "dark" ? Colors.dark.tint : Colors.light.tint}
-                            maxLength={35}
+                            maxLength={100}
                         />
 
                         <IndexButton
@@ -313,26 +313,25 @@ const Form = () => {
                 const response = await fetch(env.url_fetch + "/serene/result", requestOptions);
                 const data = await response.json();
 
-                console.log(data);
-                
-
-                // if (response.ok) {
+                if (response.ok) {
                     
-                //     router.push({
-                //         pathname: '/diagnostic',
-                //         params: {
-                //             markdownString: String(data.description),
-                //             result: (data.result)
-                //         },
-                //     });
+                    router.push({
+                        pathname: '/diagnostic',
+                        params: {
+                            description: data.description,
+                            result: (data.result)
+                        },
+                    });
     
-                // } else {
-                //     throw new Error(data.message || 'Failed to register diagnostic');
-                // }
+                } else {
+                    throw new Error(data.message || 'Failed to register diagnostic');
+                }
         
             } catch (error) {
+
                 errorMesage(error, () => {});
                 console.error(error);
+
             }
     
             setRegisterDiagIsLoading(false);
@@ -345,7 +344,7 @@ const Form = () => {
                 <ConfirmExitModal visible={modalVisible} onClose={() => setModalVisible(false)}/>
 
                 <Text style={{textAlign:'center', padding:20}}>
-                    To ensure you get the most accurate and realistic response possible from my   application, it is essential that you complete the form with complete transparency and honesty.
+                    To ensure you get the most accurate and realistic response possible from my application, it is essential that you complete the form with complete transparency and honesty.
                 </Text>
 
                 {
