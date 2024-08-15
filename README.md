@@ -10,7 +10,7 @@ The app interacts with Serene's API, which is built using Symfony. To power the 
 - Question Answering
 
 I used the following AI's:
-- mistralai/Mistral-7B-Instruct-v0.1
+- mistralai/Mistral-7B-Instruct-v0.3
 - deepset/roberta-base-squad2
 
 The user answers a 5 questions random generated form and with this form the AI will return a response of the dianostics, (the AI answer based on the questions) and 0 or 1. 0 if the user has not anxiety 1, and if user has anxiety. With this "boolean" I can render  in the screen "You have anxiety" or "You don't have anxiety".
