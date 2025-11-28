@@ -2,9 +2,6 @@
 
 Serene is an app made with Expo in React Native. Its goal is to analyze if the user has anxiety or not. 
 
-This app use _SPA Architeture_ (I didn't use API Gateway concept in this project):
-![spa-architeture](https://miro.medium.com/v2/resize:fit:1200/1*UDNTLsNbqVYI284ea3VjDA.png)
-
 The app interacts with [Serene's API](https://github.com/vdanviel/serene-check-api), which is built using Symfony. To power the app's intelligent features, I integrated AI models from Hugging Face. The app employs two AI tasks to achieve its objectives:
 - Text Generation
 - Question Answering
